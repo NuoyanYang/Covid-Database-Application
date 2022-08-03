@@ -1,0 +1,231 @@
+drop database covidDB;
+create database covidDB;
+
+CREATE TABLE Company(
+Company_Name          VARCHAR(40) NOT NULL,
+Company_Street        VARCHAR(40),
+Company_City          VARCHAR(40),
+Company_Province      CHAR(2),
+Company_Postal_Code   VARCHAR(7),
+PRIMARY KEY(Company_Name)
+);
+
+CREATE TABLE Vaccine(
+LotID                 CHAR(6) NOT NULL,
+Expire_Date           DATE NOT NULL,
+Production_Date       DATE NOT NULL,
+Dose_Number           INTEGER,
+Company_Name          VARCHAR(40) NOT NULL,
+PRIMARY KEY(LotID),
+FOREIGN KEY(Company_Name) REFERENCES Company(Company_Name) ON DELETE CASCADE
+);
+
+CREATE TABLE Patient(
+PatientOHIP           CHAR(12) NOT NULL,
+PatientFirst_Name     VARCHAR(40) NOT NULL,
+PatientLast_Name      VARCHAR(40) NOT NULL,
+Birth_Date            DATE,
+PRIMARY KEY(PatientOHIP)
+);
+
+CREATE TABLE Spouse(
+SpouseOHIP            CHAR(12) NOT NULL,
+SpouseFirst_Name      VARCHAR(40) NOT NULL,
+SpouseLast_Name       VARCHAR(40) NOT NULL,
+SpousePhone_Number    CHAR(10),
+PatientOHIP           CHAR(12) NOT NULL,
+PRIMARY KEY(SpouseOHIP),
+FOREIGN KEY(PatientOHIP) REFERENCES Patient(PatientOHIP) ON DELETE CASCADE
+);
+
+CREATE TABLE Vaccination_Site(
+Site_Name             VARCHAR(40) NOT NULL,
+Site_Street           VARCHAR(40),
+Site_City             VARCHAR(40),
+Site_Province         CHAR(2),
+Site_Postal_Code      VARCHAR(7),
+PRIMARY KEY(Site_Name)
+);
+
+CREATE TABLE Shipment(
+LotID                 CHAR(6) NOT NULL,
+Site_Name             VARCHAR(40) NOT NULL,
+PRIMARY KEY(LotID, Site_Name),
+FOREIGN KEY(LotID) REFERENCES Vaccine(LotID) ON DELETE CASCADE,
+FOREIGN KEY(Site_Name) REFERENCES Vaccination_Site(Site_Name) ON DELETE CASCADE
+);
+
+CREATE TABLE Vaccination(
+LotID                 CHAR(6) NOT NULL,
+PatientOHIP           CHAR(12) NOT NULL,
+Site_Name             VARCHAR(40) NOT NULL,
+Vax_Date              DATE,
+Vax_Time              TIME,
+PRIMARY KEY(LotID, PatientOHIP, Site_Name),
+FOREIGN KEY(LotID) REFERENCES Vaccine(LotID) ON DELETE CASCADE,
+FOREIGN KEY(PatientOHIP) REFERENCES Patient(PatientOHIP) ON DELETE CASCADE,
+FOREIGN KEY(Site_Name) REFERENCES Vaccination_Site(Site_Name) ON DELETE CASCADE
+);
+
+CREATE TABLE Medical_Practice(
+MPName                VARCHAR(40) NOT NULL,
+MPPhone_Number        CHAR(10),
+PRIMARY KEY(MPName)
+);
+
+CREATE TABLE Doctor(
+Doctor_ID             VARCHAR(10) NOT NULL,
+DoctorFirst_Name      VARCHAR(40) NOT NULL,
+DoctorLast_Name       VARCHAR(40) NOT NULL,
+MPName                VARCHAR(40) NOT NULL,
+PRIMARY KEY(Doctor_ID),
+FOREIGN KEY(MPNAME) REFERENCES Medical_Practice(MPNAME) ON DELETE CASCADE
+);
+
+CREATE TABLE Nurse(
+Nurse_ID              VARCHAR(10) NOT NULL,
+NurseFirst_Name       VARCHAR(40) NOT NULL,
+NurseLast_Name        VARCHAR(40) NOT NULL,
+PRIMARY KEY(Nurse_ID)
+);
+
+CREATE TABLE Doctor_Works_At(
+Doctor_ID             VARCHAR(10) NOT NULL,
+Site_Name             VARCHAR(40) NOT NULL,
+PRIMARY KEY(Site_Name, Doctor_ID),
+FOREIGN KEY(Doctor_ID) REFERENCES Doctor(Doctor_ID) ON DELETE CASCADE,
+FOREIGN KEY(Site_Name) REFERENCES Vaccination_Site(Site_Name) ON DELETE CASCADE
+);
+
+CREATE TABLE Nurse_Works_At(
+Nurse_ID              VARCHAR(10) NOT NULL,
+Site_Name             VARCHAR(40) NOT NULL,
+PRIMARY KEY(Site_Name, Nurse_ID),
+FOREIGN KEY(Nurse_ID) REFERENCES Nurse(Nurse_ID) ON DELETE CASCADE,
+FOREIGN KEY(Site_Name) REFERENCES Vaccination_Site(Site_Name) ON DELETE CASCADE
+);
+
+CREATE TABLE Doctor_Credential(
+Doctor_ID             VARCHAR(10) NOT NULL,
+Cred                  VARCHAR(40) NOT NULL,
+PRIMARY KEY(Doctor_ID, Cred),
+FOREIGN KEY(Doctor_ID) REFERENCES Doctor(Doctor_ID) ON DELETE CASCADE
+);
+
+CREATE TABLE Nurse_Credential(
+Nurse_ID              VARCHAR(10) NOT NULL,
+Cred                  VARCHAR(40) NOT NULL,
+PRIMARY KEY(Nurse_ID, Cred),
+FOREIGN KEY(Nurse_ID) REFERENCES Nurse(Nurse_ID) ON DELETE CASCADE
+);
+
+INSERT INTO Company VALUES 
+('Pfizer', '17300 Route Transcanadienne', 'Kirkland', 'QC', 'H9J 2M5'),
+('Moderna', '200 Technology Square', 'Cambridge', 'MA', '02139'),
+('Astrazeneca', '1004 Middlegate Rd', 'Mississauga', 'ON', 'L4Y 1M4'),
+('Johnson & Johnson', '88 McNabb St', 'Markham', 'ON', 'L3R 5L2');
+
+INSERT INTO Vaccine VALUES 
+('MD1234', '2022-02-15', '2021-09-28', '1', 'Astrazeneca'),
+('NM1111', '2022-03-18', '2021-10-5', '2', 'Pfizer'),
+('TM7899', '2022-04-23', '2021-11-15', '2', 'Pfizer'),
+('AA5692', '2022-01-15', '2021-08-21', '2', 'Pfizer'),
+('MT0026', '2022-06-15', '2022-01-03', '1', 'Moderna'),
+('MT0027', '2022-05-15', '2021-12-23', '1', 'Johnson & Johnson');
+
+INSERT INTO Patient VALUES 
+('1234567890AX', 'Donald', 'Trump', '1955-05-05'),
+('1234567891XY', 'Van', 'Gogh', '1966-06-06'),
+('1234567892CA', 'Johnny', 'Depp', '1977-07-07'),
+('1234567893AF', 'Vladimir', 'Putin', '1988-08-08'),
+('1234567894CF', 'Barack', 'Obama', '1999-09-09'),
+('1234567895GG', 'Lionel', 'Messi', '2001-01-01');
+
+INSERT INTO Spouse VALUES 
+('1234567896OJ', 'Elizabeth', 'Taylor', '4402517090', '1234567890AX'),
+('1234567897LA', 'Angelina', 'Jolie', '5672098989', '1234567891XY'),
+('1234567898PW', 'Lady', 'Gaga', '4198214538', '1234567892CA'),
+('1234567899SX', 'Anne', 'Frank', '2347422217', '1234567893AF'),
+('1234567980MK', 'Meryl', 'Streep', '6143498069', '1234567894CF'),
+('1234567981YE', 'Taylor', 'Swift', '5134830454', '1234567895GG');
+
+INSERT INTO Vaccination_Site VALUES 
+('KFL&A Public Health Napanee Office', '99 Advance Ave', 'Napanee', 'ON', 'K7R 3Y6'),
+('Selby Community Hall', '114B Pleasant Dr', 'Selby', 'ON', 'K0K 2Z0'),
+('Cataraqui Centre', '945 Gardiners Road', 'Kingston', 'ON', 'K7M 7H4'),
+('Portsmouth Olympic Harbour', '53 Yonge Street', 'Kingston', 'ON', 'K7M 6G4'),
+('Bayridge IDA Pharmacy','2790 Princess Stree','Kingston','ON','K7P 1W9'),
+('Shoppers Drug Mart', '775 Strand Blvd', 'Kingston', 'ON', 'K7P 2S7');
+
+INSERT INTO Shipment VALUES 
+('MD1234', 'KFL&A Public Health Napanee Office'),
+('NM1111', 'Selby Community Hall'),
+('TM7899', 'Cataraqui Centre'),
+('AA5692', 'Portsmouth Olympic Harbour'),
+('MT0026', 'Bayridge IDA Pharmacy'),
+('MT0027', 'Shoppers Drug Mart');
+
+INSERT INTO Vaccination VALUES 
+('MD1234', '1234567890AX', 'KFL&A Public Health Napanee Office', '2022-01-01', '10:15:00'),
+('NM1111', '1234567891XY', 'Selby Community Hall', '2022-01-01', '08:50:15'),
+('TM7899', '1234567892CA', 'Cataraqui Centre', '2022-01-02', '15:30:00'),
+('AA5692', '1234567893AF', 'Portsmouth Olympic Harbour', '2022-01-03', '14:25:15'),
+('MT0026', '1234567894CF', 'Bayridge IDA Pharmacy', '2022-01-04', '13:10:00'),
+('MT0027', '1234567895GG', 'Shoppers Drug Mart', '2022-01-05', '16:10:15');
+
+INSERT INTO Medical_Practice VALUES 
+('Appendectomy', '6135509745'),
+('Cataract Surgery', '3579758613'),
+('Carotid Endarterectomy', '8267953413'),
+('Coronary Artery Bypass', '2345771598'),
+('Hemorrhoidectomy', '6137789543'),
+('Inguinal Hernia Repair', '3598423642');
+
+INSERT INTO Doctor VALUES 
+('0000000001', 'Sigmund', 'Freud', 'Appendectomy'),
+('0000000002', 'Bruce', 'Lee', 'Cataract Surgery'),
+('0000000003', 'Alex', 'Yang', 'Carotid Endarterectomy'),
+('0000000004', 'Steven', 'Walker', 'Coronary Artery Bypass'),
+('0000000005', 'Grace', 'Kelly', 'Hemorrhoidectomy'),
+('0000000006', 'Wendy', 'Liu', 'Inguinal Hernia Repair');
+
+
+INSERT INTO Nurse VALUES 
+('0100000000', 'Jennifer', 'Lawrence'),
+('0200000000', 'Melody', 'Li'),
+('0300000000', 'Jessica', 'Wu'),
+('0400000000', 'Whiskey', 'Zhou'),
+('0500000000', 'Sunnie', 'Zhang'),
+('0600000000', 'Claire', 'Wang');
+
+INSERT INTO Doctor_Works_At VALUES 
+('0000000001', 'KFL&A Public Health Napanee Office'),
+('0000000002', 'Selby Community Hall'),
+('0000000003', 'Cataraqui Centre'),
+('0000000004', 'Portsmouth Olympic Harbour'),
+('0000000005', 'Bayridge IDA Pharmacy'),
+('0000000006', 'Shoppers Drug Mart');
+
+INSERT INTO Nurse_Works_At VALUES 
+('0100000000', 'KFL&A Public Health Napanee Office'),
+('0200000000', 'Selby Community Hall'),
+('0300000000', 'Cataraqui Centre'),
+('0400000000', 'Portsmouth Olympic Harbour'),
+('0500000000', 'Bayridge IDA Pharmacy'),
+('0600000000', 'Shoppers Drug Mart');
+
+INSERT INTO Doctor_Credential VALUES 
+('0000000001', 'Doctor of Medicine'),
+('0000000002', 'Doctor of Osteopathic Medicine'),
+('0000000003', 'Doctor of Philosophy'),
+('0000000004', 'Doctor of Osteopathic Medicine'),
+('0000000005', 'Doctor of Philosophy'),
+('0000000006', 'Doctor of Medicine');
+
+INSERT INTO Nurse_Credential VALUES 
+('0100000000', 'Certified Nurse Practitioner'),
+('0200000000', 'Certified Nurse Midwife'),
+('0300000000', 'Certified Nurse Practitioner'),
+('0400000000', 'Clinical Nurse Specialist'),
+('0500000000', 'Certified Nurse Midwife'),
+('0600000000', 'Physician Assistant');
