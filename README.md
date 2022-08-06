@@ -7,6 +7,8 @@ It aimed to establish a fully functioning web-based interface for the covid vacc
 One can try to convert the following Entity Relation (ER) Diagram to get the database that was used in this project. [CovidVaccine.pdf](https://github.com/NuoyanYang/Covid-Database-Application/files/9274157/CovidVaccine.pdf).
 
 ## Prerequisites
+XAMPP download link: https://www.apachefriends.org/
+
 This is an example of how to run the code in local. One need to download XAMPP (XAMPP helps a local host or server to test its website and clients via computers and laptops before releasing it to the main server). Start XAMPP and start the Apache and the MySQL services.
 
 ![1659746722194](https://user-images.githubusercontent.com/71059629/183226841-5b694d94-1b1e-42a4-86e8-a082ebfb7655.png)
