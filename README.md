@@ -2,7 +2,7 @@
 
 A course project for CISC 332 Database Management Systems in Winter 2022 at Queen's University.
 
-It aimed to establish a fully functioning web-based interface for the covid vaccination database. The database was created by running covidDB.sql or covidDB.txt script in a MySQL server. The application was written by PHP, which was used to generate the dynamic content (ie. accessing the back end database and displaying the results) and work with (almost) any DBMS. It used PHP Data Objects (PDO), not the mysqli api.
+It aimed to establish a fully functioning web-based interface for the covid vaccination database. The database was created by running covidDB.sql or covidDB.txt script in a MySQL server. The application was written by PHP, which was used to generate the dynamic content (i.e. accessing the back end database and displaying the results) and work with (almost) any DBMS. It used PHP Data Objects (PDO), not the mysqli api.
 
 One can try to convert the following Entity Relation (ER) Diagram to get the database that was used in this project. [CovidVaccine.pdf](https://github.com/NuoyanYang/Covid-Database-Application/files/9274157/CovidVaccine.pdf).
 
